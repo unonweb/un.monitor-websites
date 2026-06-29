@@ -26,8 +26,16 @@ function main {
 		source "${PATH_DEFAULTS}"
 	fi
 
-	# Initialize state file if it doesn't exist
-	touch "${STATE_FILE}"
+	# MKDIR state
+	if [[ ! -d "${STATE_DIR}" ]]; then
+		log "<6> Creating state dir at: ${STATE_DIR}"
+		mkdir -p "${STATE_DIR}"
+	fi
+	
+	# TOUCH state file
+	if [[ ! -f "${STATE_FILE}" ]]; then
+		touch "${STATE_FILE}"
+	fi
 
 	for url in "${URLS[@]}"; do
 		local key=$(sanitize_url "${url}")
