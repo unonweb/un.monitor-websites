@@ -26,6 +26,30 @@ function main {
 		source "${PATH_DEFAULTS}"
 	fi
 
+	# CHECK internal dependencies
+	for fctn in log sanitize_url; do
+    	if ! declare -f "${fctn}" > /dev/null; then
+        	echo "<3> Error: Required function missing: ${fctn}" >&2
+        	exit 1
+    	fi
+	done
+	
+	# CHECK external dependencies
+	for cmd in curl; do
+    	if ! command -v "${cmd}" &> /dev/null; then
+        	log "<3> Error: Required external command missing: ${cmd}" >&2
+        	exit 1
+    	fi
+	done
+
+	# CHECK vars
+	for var in STATE_DIR; do
+		if [[ -z "${!var}" ]]; then
+			log "<3> Required var missing: ${var}"
+			exit 1
+		fi
+	done
+
 	# MKDIR state
 	if [[ ! -d "${STATE_DIR}" ]]; then
 		log "<6> Creating state dir at: ${STATE_DIR}"
